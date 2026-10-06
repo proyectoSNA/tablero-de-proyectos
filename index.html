@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tablero de Proyectos - CPC Sistema Nacional Anticorrupción</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Librería ligera para procesar CSV directamente en el navegador -->
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
+  <style>
+    :root {
+      --primary: #1e3a8a;
+      --primary-light: #3b82f6;
+      --primary-dark: #172554;
+      --accent: #0ea5e9;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      line-height: 1.5;
+      padding: 24px;
+    }
+
+    .header-container {
+      max-width: 1400px;
+      margin: 0 auto 24px;
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+      color: white;
+      padding: 18px 28px;
+      border-radius: 16px;
+      box-shadow: var(--shadow-md);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .header-logo-card {
+      flex: 0 0 auto;
+      background: #ffffff;
+      padding: 6px 14px;
+      border-radius: 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.18);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+    }
+
+    .header-logo-card img {
+      height: 52px;
+      width: auto;
+      max-width: 190px;
+      display: block;
+      object-fit: contain;
+    }
+
+    .header-title {
+      flex: 1 1 auto;
+      text-align: center;
+      padding: 0 16px;
+    }
+
+    .header-title h1 {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 4px;
+      color: #ffffff;
+    }
+
+    .header-title p {
+      color: #94a3b8;
+      font-size: 14px;
+    }
+
+    .status-badge {
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+    }
+
+    @media (max-width: 900px) {
+      .header-container {
+        flex-direction: column;
+        text-align: center;
+      }
+    }
+    .header-logo-card {
+      background: #ffffff;
+      padding: 6px 14px;
+      border-radius: 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.18);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      justify-self: start;
+    }
+
+    .header-logo-card img {
+      height: 52px;
+      width: auto;
+      max-width: 190px;
+      display: block;
+      object-fit: contain;
+    }
+
+    .header-title {
+      text-align: center;
+      justify-self: center;
+    }
+
+    .header-title h1 {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 4px;
+      color: #ffffff;
+    }
+
+    .header-title p {
+      color: #94a3b8;
+      font-size: 14px;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      justify-self: end;
+      white-space: nowrap;
+    }
+
+    @media (max-width: 960px) {
+      .header-logo-card, .status-badge {
+        justify-self: center;
+      }
+    }
+    .header-title h1 {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .header-title p {
+      color: #94a3b8;
+      font-size: 14px;
+      margin-top: 4px;
+    }
+
+    .header-logo-card {
+      background: #ffffff;
+      padding: 6px 14px;
+      border-radius: 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.18);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+    }
+
+    .header-logo {
+      height: 52px;
+      width: auto;
+      max-width: 190px;
+      display: block;
+      object-fit: contain;
+    }
+
+    .kpi-container {
+      max-width: 1400px;
+      margin: 0 auto 24px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .kpi-card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 18px 22px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .kpi-label {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    .kpi-value {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--primary);
+      margin-top: 6px;
+    }
+
+    .filters-bar {
+      max-width: 1400px;
+      margin: 0 auto 24px;
+      background: var(--card-bg);
+      padding: 20px 24px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      align-items: end;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .filter-group label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #334155;
+    }
+
+    select, input {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1px solid #cbd5e1;
+      font-size: 14px;
+      background-color: #fff;
+      color: #1e293b;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    select:focus, input:focus {
+      border-color: var(--primary-light);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    }
+
+    .main-grid {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 24px;
+    }
+
+    @media (max-width: 1024px) {
+      .main-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .project-list-panel {
+      background: var(--card-bg);
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      height: 750px;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .panel-header h3 {
+      font-size: 15px;
+      font-weight: 700;
+      color: #1e293b;
+    }
+
+    .project-list {
+      overflow-y: auto;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding-right: 4px;
+    }
+
+    .project-card-item {
+      padding: 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background-color: #fff;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+    }
+
+    .project-card-item:hover {
+      border-color: var(--primary-light);
+      background-color: #f0f7ff;
+      transform: translateY(-1px);
+    }
+
+    .project-card-item.active {
+      border-color: var(--primary-light);
+      background-color: #eff6ff;
+      box-shadow: 0 0 0 2px var(--primary-light);
+    }
+
+    .project-card-item .badge {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 9999px;
+      display: inline-block;
+      margin-bottom: 6px;
+    }
+
+    .badge-period-1 { background-color: #fef3c7; color: #92400e; }
+    .badge-period-2 { background-color: #dbeafe; color: #1e40af; }
+
+    .project-card-title {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: #1e293b;
+      line-height: 1.35;
+    }
+
+    .project-detail-panel {
+      background: var(--card-bg);
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      padding: 28px;
+      height: 750px;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    .detail-header {
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 24px;
+    }
+
+    .detail-header .tags-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .state-tag {
+      background-color: #1e293b;
+      color: white;
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .period-tag {
+      background-color: #e0e7ff;
+      color: #3730a3;
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .detail-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #0f172a;
+      line-height: 1.3;
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    .stat-box {
+      background: #f8fafc;
+      padding: 12px 16px;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .stat-box .title {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .stat-box .val {
+      font-size: 14px;
+      font-weight: 700;
+      color: #1e293b;
+      margin-top: 4px;
+    }
+
+    .section-block { margin-bottom: 20px; }
+
+    .section-block h4 {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #475569;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-block p, .section-block div {
+      font-size: 14px;
+      color: #334155;
+      line-height: 1.6;
+      background: #ffffff;
+      padding: 12px 16px;
+      border-radius: 8px;
+      border: 1px solid #f1f5f9;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+      white-space: pre-wrap;
+    }
+
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      color: #94a3b8;
+      text-align: center;
+    }
+
+    .empty-state svg {
+      width: 56px;
+      height: 56px;
+      margin-bottom: 12px;
+      opacity: 0.5;
+    }
+
+    /* Estado de carga */
+    .loading-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(255,255,255,0.92);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      font-family: inherit;
+    }
+    .spinner {
+      width: 48px;
+      height: 48px;
+      border: 4px solid #e2e8f0;
+      border-top-color: var(--primary-light);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: 16px;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Pantalla de carga mientras descarga los datos de Sheets -->
+  <div id="loading" class="loading-overlay">
+    <div class="spinner"></div>
+    <div style="font-weight: 600; color: #1e3a8a; font-size: 16px;">Sincronizando información en vivo...</div>
+    <div style="color: #64748b; font-size: 13px; margin-top: 4px;">Cargando datos desde Google Sheets</div>
+  </div>
+
+  <div class="header-container">
+    <div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
+      <!-- Recuadro blanco institucional para el logo -->
+      <div class="header-logo-card">
+        <img src="RedNacionalCPC-1024x323.png" alt="Red Nacional de Comités de Participación Ciudadana" class="header-logo">
+      </div>
+      
+      <!-- Título y subtítulo -->
+      <div class="header-title">
+        <h1>Portal Interactivo de Proyectos Anticorrupción</h1>
+        <p>Comités de Participación Ciudadana (CPC) - Sistema Nacional Anticorrupción</p>
+      </div>
+    </div>
+
+    <!-- Indicador de estado -->
+    <div style="display:flex; align-items:center; gap: 8px;">
+      <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#22c55e;"></span>
+      <span style="background: rgba(255,255,255,0.15); padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600;">
+        Conexión directa a Google Sheets
+      </span>
+    </div>
+  </div>
+  <div class="kpi-container">
+    <div class="kpi-card">
+      <span class="kpi-label">Total de Proyectos Registrados</span>
+      <span class="kpi-value" id="kpi-total">0</span>
+    </div>
+    <div class="kpi-card">
+      <span class="kpi-label">Entidades Federativas</span>
+      <span class="kpi-value" id="kpi-states">0</span>
+    </div>
+    <div class="kpi-card">
+      <span class="kpi-label">Periodo 2016 - 2020</span>
+      <span class="kpi-value" id="kpi-p1">0</span>
+    </div>
+    <div class="kpi-card">
+      <span class="kpi-label">Periodo 2021 - 2026</span>
+      <span class="kpi-value" id="kpi-p2">0</span>
+    </div>
+  </div>
+
+  <div class="filters-bar">
+    <div class="filter-group">
+      <label for="select-estado">1. Selecciona el Estado / Entidad:</label>
+      <select id="select-estado">
+        <option value="ALL">-- Todos los Estados --</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label for="select-periodo">2. Selecciona el Periodo:</label>
+      <select id="select-periodo">
+        <option value="ALL">-- Todos los Periodos --</option>
+        <option value="2016-2020">Periodo 2016 - 2020</option>
+        <option value="2021-2026">Periodo 2021 - 2026</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label for="search-input">3. Búsqueda por palabra clave:</label>
+      <input type="text" id="search-input" placeholder="Buscar por tema, institución o palabra...">
+    </div>
+  </div>
+
+  <div class="main-grid">
+    <div class="project-list-panel">
+      <div class="panel-header">
+        <h3>Proyectos Encontrados</h3>
+        <span id="project-counter" style="font-size: 12px; font-weight: 600; color: var(--primary);">0</span>
+      </div>
+      <div class="project-list" id="project-list">
+      </div>
+    </div>
+
+    <div class="project-detail-panel" id="project-detail">
+      <div class="empty-state">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+        </svg>
+        <p>Selecciona un estado, periodo y proyecto para visualizar la información detallada.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // =========================================================================
+    // PEGA AQUÍ EL ENLACE CSV PUBLICADO DE TU GOOGLE SHEETS
+    // =========================================================================
+      const GOOGLE_SHEETS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRLl0RX7W9g93dlVmS7iujh-gfwqUvEY0mI0SvjYqGDGP7pjC2w7aHDDcwddOwp2iifluWmjfEBGWUU/pub?output=csv";
+
+    let data = [];
+    let selectedState = "ALL";
+    let selectedPeriod = "ALL";
+    let searchTerm = "";
+    let selectedProjectIndex = 0;
+
+    // Cargar datos en vivo al abrir la página
+    async function loadDataFromSheets() {
+      try {
+          if (!GOOGLE_SHEETS_CSV_URL || GOOGLE_SHEETS_CSV_URL.trim() === "" || GOOGLE_SHEETS_CSV_URL.includes("PEGA_AQUI")) {
+          document.getElementById("loading").innerHTML = `
+            <div style="background:white; padding:28px; border-radius:12px; border:1px solid #cbd5e1; max-width:550px; text-align:center;">
+              <h3 style="color:#1e3a8a; margin-bottom:8px;">Falta vincular tu Google Sheets</h3>
+              <p style="font-size:14px; color:#475569; line-height:1.5;">
+                Pega el enlace CSV publicado de tu hoja de cálculo en la variable <code>GOOGLE_SHEETS_CSV_URL</code> dentro del archivo HTML.
+              </p>
+            </div>
+          `;
+          return;
+        }
+
+        Papa.parse(GOOGLE_SHEETS_CSV_URL, {
+          download: true,
+          header: true,
+          skipEmptyLines: true,
+          complete: function(results) {
+            data = results.data.filter(row => row.estado && row.nombre_proyecto);
+            document.getElementById("loading").style.display = "none";
+            initDashboard();
+          },
+          error: function(err) {
+            console.error("Error al descargar datos de Sheets:", err);
+            document.getElementById("loading").innerHTML = `
+              <div style="background:white; padding:28px; border-radius:12px; border:1px solid #f87171; max-width:500px; text-align:center;">
+                <h3 style="color:#b91c1c; margin-bottom:8px;">Error al conectar con Google Sheets</h3>
+                <p style="font-size:14px; color:#475569;">Verifica que la hoja esté publicada en la web como CSV y que el enlace sea accesible.</p>
+              </div>
+            `;
+          }
+        });
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    function initDashboard() {
+      // Poblar estados únicos
+      const states = Array.from(new Set(data.map(d => d.estado ? d.estado.trim() : ''))).filter(Boolean).sort();
+      const selectEstado = document.getElementById("select-estado");
+      selectEstado.innerHTML = '<option value="ALL">-- Todos los Estados --</option>';
+      states.forEach(st => {
+        const opt = document.createElement("option");
+        opt.value = st;
+        opt.textContent = st;
+        selectEstado.appendChild(opt);
+      });
+
+      // Actualizar KPIs
+      document.getElementById("kpi-total").textContent = data.length;
+      document.getElementById("kpi-states").textContent = states.length;
+      document.getElementById("kpi-p1").textContent = data.filter(d => (d.periodo || '').includes("2016-2020")).length;
+      document.getElementById("kpi-p2").textContent = data.filter(d => (d.periodo || '').includes("2021-2026")).length;
+
+      renderList();
+    }
+
+    function getFilteredData() {
+      return data.filter(item => {
+        const matchState = (selectedState === "ALL" || (item.estado || '').trim() === selectedState);
+        const matchPeriod = (selectedPeriod === "ALL" || (item.periodo || '').trim() === selectedPeriod);
+        const matchSearch = searchTerm === "" || 
+          ((item.nombre_proyecto || "") + " " + (item.objetivo || "") + " " + (item.instituciones_participantes || "") + " " + (item.tematicas || ""))
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase());
+        return matchState && matchPeriod && matchSearch;
+      });
+    }
+
+    function renderList() {
+      const filtered = getFilteredData();
+      const listContainer = document.getElementById("project-list");
+      const counter = document.getElementById("project-counter");
+      listContainer.innerHTML = "";
+      counter.textContent = `${filtered.length} proyecto(s)`;
+
+      if (filtered.length === 0) {
+        listContainer.innerHTML = '<div style="padding: 20px; text-align: center; color: #94a3b8; font-size: 13px;">No se encontraron proyectos con los filtros seleccionados.</div>';
+        renderDetail(null);
+        return;
+      }
+
+      if (selectedProjectIndex >= filtered.length) {
+        selectedProjectIndex = 0;
+      }
+
+      filtered.forEach((p, idx) => {
+        const card = document.createElement("div");
+        card.className = `project-card-item ${idx === selectedProjectIndex ? 'active' : ''}`;
+        const isP1 = (p.periodo || '').includes('2016-2020');
+        const badgeClass = isP1 ? 'badge-period-1' : 'badge-period-2';
+        
+        card.innerHTML = `
+          <div>
+            <span class="badge ${badgeClass}">${p.periodo || ''}</span>
+            <span style="font-size: 11px; color: #64748b; font-weight: 500; margin-left: 4px;">${p.estado || ''}</span>
+          </div>
+          <div class="project-card-title">${p.nombre_proyecto || 'Proyecto sin título'}</div>
+        `;
+
+        card.addEventListener("click", () => {
+          selectedProjectIndex = idx;
+          document.querySelectorAll(".project-card-item").forEach(c => c.classList.remove("active"));
+          card.classList.add("active");
+          renderDetail(p);
+        });
+
+        listContainer.appendChild(card);
+      });
+
+      renderDetail(filtered[selectedProjectIndex]);
+    }
+
+    function renderDetail(p) {
+      const detailContainer = document.getElementById("project-detail");
+      if (!p) {
+        detailContainer.innerHTML = `
+          <div class="empty-state">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+            <p>No hay información para mostrar.</p>
+          </div>
+        `;
+        return;
+      }
+
+      detailContainer.innerHTML = `
+        <div class="detail-header">
+          <div class="tags-row">
+            <span class="state-tag">${p.estado || 'General'}</span>
+            <span class="period-tag">${p.periodo || 'Periodo'}</span>
+            <span style="background: #e2e8f0; color: #334155; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600;">${p.bloque || 'Proyecto'}</span>
+          </div>
+          <h2 class="detail-title">${p.nombre_proyecto || 'Sin título definido'}</h2>
+        </div>
+
+        <div class="stats-row">
+          <div class="stat-box">
+            <div class="title">Año de Inicio</div>
+            <div class="val">${p.anio_inicio || 'No especificado'}</div>
+          </div>
+          <div class="stat-box">
+            <div class="title">Estado Actual</div>
+            <div class="val">${p.estado_actual || 'No especificado'}</div>
+          </div>
+          <div class="stat-box">
+            <div class="title">Municipios Atendidos</div>
+            <div class="val">${p.municipios_atendidos || 'No especificado'}</div>
+          </div>
+          <div class="stat-box">
+            <div class="title">Personas Impactadas</div>
+            <div class="val">${p.personas_impactadas || 'No especificado'}</div>
+          </div>
+          <div class="stat-box">
+            <div class="title">¿Replicable?</div>
+            <div class="val">${p.posibilidad_replica || 'No especificado'}</div>
+          </div>
+        </div>
+
+        <div class="section-block">
+          <h4>🎯 Objetivo del Proyecto</h4>
+          <p>${p.objetivo || 'No se registró objetivo.'}</p>
+        </div>
+
+        <div class="section-block">
+          <h4>⚡ Acciones Realizadas</h4>
+          <p>${p.acciones_realizadas || 'No se registraron acciones específicas.'}</p>
+        </div>
+
+        <div class="section-block">
+          <h4>🏛️ Instituciones Participantes</h4>
+          <p>${p.instituciones_participantes || 'No especificadas.'}</p>
+        </div>
+
+        <div class="section-block">
+          <h4>📊 Resultados y Combate a la Corrupción</h4>
+          <p>${p.resultados_impacto || 'No se detallaron resultados.'}</p>
+        </div>
+
+        <div class="section-block">
+          <h4>📌 Áreas de Incidencia y Temáticas</h4>
+          <p><strong>Áreas:</strong> ${p.areas_incidencia || 'N/A'}<br><strong>Temáticas:</strong> ${p.tematicas || 'N/A'}</p>
+        </div>
+
+        <div class="section-block">
+          <h4>💡 Innovación Destacable</h4>
+          <p>${p.innovacion || 'Sin mención de innovación.'}</p>
+        </div>
+
+        <div class="section-block">
+          <h4>📁 Medios de Verificación / Evidencia</h4>
+          <p>${p.medios_verificacion || 'No se indicaron medios de verificación.'}</p>
+        </div>
+
+        <div style="margin-top: 20px; font-size: 11px; color: #94a3b8; border-top: 1px solid #f1f5f9; padding-top: 12px;">
+          Año de instalación del CPC: ${p.anio_instalacion_cpc || 'N/A'}
+        </div>
+      `;
+    }
+
+    // Event listeners
+    document.getElementById("select-estado").addEventListener("change", (e) => {
+      selectedState = e.target.value;
+      selectedProjectIndex = 0;
+      renderList();
+    });
+
+    document.getElementById("select-periodo").addEventListener("change", (e) => {
+      selectedPeriod = e.target.value;
+      selectedProjectIndex = 0;
+      renderList();
+    });
+
+    document.getElementById("search-input").addEventListener("input", (e) => {
+      searchTerm = e.target.value;
+      selectedProjectIndex = 0;
+      renderList();
+    });
+
+    // Iniciar carga
+    window.addEventListener("DOMContentLoaded", loadDataFromSheets);
+  </script>
+</body>
+</html>
