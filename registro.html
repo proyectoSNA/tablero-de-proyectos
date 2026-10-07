@@ -3,10 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Registro de Proyectos Estatales</title>
+  <title>Registro Oficial de Proyecto</title>
   <style>
     :root {
       --primary: #1e3a8a;
+      --primary-hover: #172554;
       --bg: #f8fafc;
       --card-bg: #ffffff;
       --text: #0f172a;
@@ -23,7 +24,7 @@
     }
     .form-container {
       background: var(--card-bg);
-      max-width: 650px;
+      max-width: 760px;
       width: 100%;
       padding: 2.5rem;
       border-radius: 12px;
@@ -40,14 +41,22 @@
       margin-bottom: 1.5rem;
       line-height: 1.4;
     }
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
     .form-group {
       margin-bottom: 1.25rem;
+    }
+    .full-width {
+      grid-column: span 2;
     }
     label {
       display: block;
       margin-bottom: 0.4rem;
       font-weight: 600;
-      font-size: 0.9rem;
+      font-size: 0.88rem;
     }
     input, select, textarea {
       width: 100%;
@@ -56,8 +65,9 @@
       border-radius: 6px;
       font-size: 0.95rem;
       box-sizing: border-box;
+      font-family: inherit;
     }
-    textarea { resize: vertical; min-height: 80px; }
+    textarea { resize: vertical; min-height: 85px; }
     button {
       background-color: var(--primary);
       color: white;
@@ -68,99 +78,176 @@
       border-radius: 6px;
       cursor: pointer;
       width: 100%;
-      transition: opacity 0.2s;
+      transition: background-color 0.2s;
+      margin-top: 1rem;
     }
+    button:hover { background-color: var(--primary-hover); }
     button:disabled { opacity: 0.6; cursor: not-allowed; }
     #msgStatus {
-      margin-top: 1rem;
+      margin-top: 1.2rem;
       text-align: center;
       font-weight: 600;
+      line-height: 1.4;
     }
+    @media (max-width: 640px) {
+      .form-grid { grid-template-columns: 1fr; }
+      .full-width { grid-column: span 1; }
+      .form-container { padding: 1.5rem; }
+    }
+    .form-logo {
+  display: block;
+  max-width: 180px;      /* Puedes ajustar el ancho según el diseño del logo */
+  height: auto;
+  margin: 0 auto 1.5rem auto; /* Centra la imagen y da espacio hacia el título */
+}
   </style>
 </head>
 <body>
 
   <div class="form-container">
-    <h2>Registro Oficial de Proyecto</h2>
+  <!-- LOGOTIPO INSTITUCIONAL -->
+  <img src="RedNacionalCPC-1024x323.png" alt="Logotipo Institucional" class="form-logo">
+
+  <h2>Registro Oficial de Proyecto</h2>
     
     <div class="alert-box">
-      <strong>Aviso Importante:</strong> Ingrese la información oficial de su entidad. La propuesta quedará en estado <em>Pendiente</em> y pasará por un proceso de revisión antes de ser publicada en el portal público.
+      <strong>Aviso Importante:</strong> Ingrese la información oficial de la iniciativa estatal. Su propuesta quedará en estado <em>Pendiente</em> y pasará por un proceso de revisión antes de ser incorporada y publicada en el portal público.
     </div>
 
     <form id="projectForm">
-      <div class="form-group">
-        <label for="correo">Correo Institucional Oficial *</label>
-        <input type="email" id="correo" required placeholder="enlace@gobierno.gob.mx">
-      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="estado">Entidad Federativa *</label>
+          <select id="estado" required>
+            <option value="" disabled selected>Seleccione un estado...</option>
+            <option value="Aguascalientes">Aguascalientes</option>
+            <option value="Baja California">Baja California</option>
+            <option value="Baja California Sur">Baja California Sur</option>
+            <option value="Campeche">Campeche</option>
+            <option value="Chiapas">Chiapas</option>
+            <option value="Chihuahua">Chihuahua</option>
+            <option value="Ciudad de México">Ciudad de México</option>
+            <option value="Coahuila">Coahuila</option>
+            <option value="Colima">Colima</option>
+            <option value="Durango">Durango</option>
+            <option value="Estado de México">Estado de México</option>
+            <option value="Guanajuato">Guanajuato</option>
+            <option value="Guerrero">Guerrero</option>
+            <option value="Hidalgo">Hidalgo</option>
+            <option value="Jalisco">Jalisco</option>
+            <option value="Michoacán">Michoacán</option>
+            <option value="Morelos">Morelos</option>
+            <option value="Nayarit">Nayarit</option>
+            <option value="Nuevo León">Nuevo León</option>
+            <option value="Oaxaca">Oaxaca</option>
+            <option value="Puebla">Puebla</option>
+            <option value="Querétaro">Querétaro</option>
+            <option value="Quintana Roo">Quintana Roo</option>
+            <option value="San Luis Potosí">San Luis Potosí</option>
+            <option value="Sinaloa">Sinaloa</option>
+            <option value="Sonora">Sonora</option>
+            <option value="Tabasco">Tabasco</option>
+            <option value="Tamaulipas">Tamaulipas</option>
+            <option value="Tlaxcala">Tlaxcala</option>
+            <option value="Veracruz">Veracruz</option>
+            <option value="Yucatán">Yucatán</option>
+            <option value="Zacatecas">Zacatecas</option>
+            <option value="Nacional">Nacional</option>
+          </select>
+        </div>
 
-      <div class="form-group">
-        <label for="estado">Entidad Federativa *</label>
-        <select id="estado" required>
-          <option value="" disabled selected>Seleccione un estado...</option>
-          <option value="Aguascalientes">Aguascalientes</option>
-          <option value="Baja California">Baja California</option>
-          <option value="Baja California Sur">Baja California Sur</option>
-          <option value="Campeche">Campeche</option>
-          <option value="Chiapas">Chiapas</option>
-          <option value="Chihuahua">Chihuahua</option>
-          <option value="Ciudad de México">Ciudad de México</option>
-          <option value="Coahuila">Coahuila</option>
-          <option value="Colima">Colima</option>
-          <option value="Durango">Durango</option>
-          <option value="Estado de México">Estado de México</option>
-          <option value="Guanajuato">Guanajuato</option>
-          <option value="Guerrero">Guerrero</option>
-          <option value="Hidalgo">Hidalgo</option>
-          <option value="Jalisco">Jalisco</option>
-          <option value="Michoacán">Michoacán</option>
-          <option value="Morelos">Morelos</option>
-          <option value="Nayarit">Nayarit</option>
-          <option value="Nuevo León">Nuevo León</option>
-          <option value="Oaxaca">Oaxaca</option>
-          <option value="Puebla">Puebla</option>
-          <option value="Querétaro">Querétaro</option>
-          <option value="Quintana Roo">Quintana Roo</option>
-          <option value="San Luis Potosí">San Luis Potosí</option>
-          <option value="Sinaloa">Sinaloa</option>
-          <option value="Sonora">Sonora</option>
-          <option value="Tabasco">Tabasco</option>
-          <option value="Tamaulipas">Tamaulipas</option>
-          <option value="Tlaxcala">Tlaxcala</option>
-          <option value="Veracruz">Veracruz</option>
-          <option value="Yucatán">Yucatán</option>
-          <option value="Zacatecas">Zacatecas</option>
-        </select>
-      </div>
+        <div class="form-group">
+          <label for="periodo">Periodo *</label>
+          <select id="periodo" required>
+            <option value="" disabled selected>Seleccione el periodo...</option>
+            <option value="2016-2020">2016-2020</option>
+            <option value="2021-2026">2021-2026</option>
+          </select>
+        </div>
 
-      <div class="form-group">
-        <label for="periodo">Periodo de Implementación *</label>
-        <select id="periodo" required>
-          <option value="" disabled selected>Seleccione el periodo...</option>
-          <option value="2016-2020">2016-2020</option>
-          <option value="2021-2026">2021-2026</option>
-          <option value="2026-2030">2026-2030</option>
-        </select>
-      </div>
+        <div class="form-group">
+          <label for="anio_instalacion">Año de Instalación del CPC</label>
+          <input type="text" id="anio_instalacion" placeholder="Ej. 2021">
+        </div>
 
-      <div class="form-group">
-        <label for="bloque">Bloque Temático</label>
-        <input type="text" id="bloque" placeholder="Ej. Prevención, Transparencia, Control...">
-      </div>
+        <div class="form-group">
+          <label for="anio_inicio">Año de Inicio de Operación</label>
+          <input type="text" id="anio_inicio" placeholder="Ej. 2022">
+        </div>
 
-      <div class="form-group">
-        <label for="nombre_proyecto">Nombre del Proyecto *</label>
-        <input type="text" id="nombre_proyecto" required placeholder="Título formal de la iniciativa">
-      </div>
+        <div class="form-group full-width">
+          <label for="nombre_proyecto">Nombre del Proyecto *</label>
+          <input type="text" id="nombre_proyecto" required placeholder="Título oficial de la iniciativa">
+        </div>
 
-      <div class="form-group">
-        <label for="objetivo">Objetivo General *</label>
-        <textarea id="objetivo" required placeholder="Describa brevemente la meta del proyecto..."></textarea>
-      </div>
+        <div class="form-group full-width">
+          <label for="objetivo">Objetivo General *</label>
+          <textarea id="objetivo" required placeholder="Describa el objetivo principal del proyecto..."></textarea>
+        </div>
 
-      <div class="form-group">
-        <label for="enlace_documento">Enlace a Documento o Evidencia (Opcional)</label>
-        <input type="url" id="enlace_documento" placeholder="https://...">
-      </div>
+        <div class="form-group full-width">
+          <label for="acciones_realizadas">Acciones Realizadas</label>
+          <textarea id="acciones_realizadas" placeholder="Principales actividades ejecutadas..."></textarea>
+        </div>
+
+        <div class="form-group full-width">
+          <label for="instituciones_participantes">Instituciones Participantes</label>
+          <input type="text" id="instituciones_participantes" placeholder="Dependencias, organismos, sociedad civil...">
+        </div>
+
+        <div class="form-group full-width">
+          <label for="resultados_impacto">Resultados e Impacto</label>
+          <textarea id="resultados_impacto" placeholder="Impacto cualitativo o cuantitativo obtenido..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="areas_incidencia">Áreas de Incidencia</label>
+          <input type="text" id="areas_incidencia" placeholder="Ej. Combate a la corrupción, Transparencia...">
+        </div>
+
+        <div class="form-group">
+          <label for="tematicas">Temáticas</label>
+          <input type="text" id="tematicas" placeholder="Ejes o temáticas asociadas">
+        </div>
+
+        <div class="form-group">
+          <label for="municipios_atendidos">Municipios Atendidos</label>
+          <input type="text" id="municipios_atendidos" placeholder="Número o nombres de municipios">
+        </div>
+
+        <div class="form-group">
+          <label for="personas_impactadas">Personas Impactadas</label>
+          <input type="text" id="personas_impactadas" placeholder="Población beneficiada directa/indirecta">
+        </div>
+
+        <div class="form-group">
+          <label for="estado_actual">Estado Actual del Proyecto *</label>
+          <select id="estado_actual" required>
+            <option value="" disabled selected>Seleccione una opción...</option>
+            <option value="Activo">Activo</option>
+            <option value="Concluido">Concluido</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="posibilidad_replica">Posibilidad de Réplica</label>
+          <select id="posibilidad_replica">
+            <option value="" selected>Seleccione una opción...</option>
+            <option value="Alta">Alta</option>
+            <option value="Media">Media</option>
+            <option value="Baja">Baja</option>
+          </select>
+        </div>
+
+        <div class="form-group full-width">
+          <label for="innovacion">Innovación / Factor Diferencial</label>
+          <textarea id="innovacion" placeholder="¿Qué hace novedosa o única a esta práctica?"></textarea>
+        </div>
+
+        <div class="form-group full-width">
+          <label for="medios_verificacion">Medios de Verificación / Evidencia Disponible</label>
+          <textarea id="medios_verificacion" placeholder="Mencione los documentos, acuerdos, gacetas, informes o actas que respaldan este proyecto..."></textarea>
+        </div>
 
       <button type="submit" id="btnSubmit">Enviar Registro</button>
     </form>
@@ -169,7 +256,7 @@
   </div>
 
   <script>
-    // PEGA AQUÍ LA URL DE TU WEB APP DE APPS SCRIPT:
+    // PEGA AQUÍ LA URL DE TU APLICACIÓN WEB DE APPS SCRIPT (la que termina en /exec):
     const URL_APPS_SCRIPT = "https://script.google.com/macros/s/AKfycbxFUCaP0_mBzseAZWdccTBb6Am2zIWPAL41e5-AZZPF_8UDYnl6DZwpci01o6IEhxP7/exec";
 
     document.getElementById("projectForm").addEventListener("submit", async function(e) {
@@ -183,13 +270,23 @@
       msg.textContent = "";
 
       const payload = {
-        correo: document.getElementById("correo").value.trim(),
         estado: document.getElementById("estado").value,
         periodo: document.getElementById("periodo").value,
-        bloque: document.getElementById("bloque").value.trim(),
+        anio_instalacion: document.getElementById("anio_instalacion").value.trim(),
         nombre_proyecto: document.getElementById("nombre_proyecto").value.trim(),
         objetivo: document.getElementById("objetivo").value.trim(),
-        enlace_documento: document.getElementById("enlace_documento").value.trim()
+        anio_inicio: document.getElementById("anio_inicio").value.trim(),
+        acciones_realizadas: document.getElementById("acciones_realizadas").value.trim(),
+        instituciones_participantes: document.getElementById("instituciones_participantes").value.trim(),
+        resultados_impacto: document.getElementById("resultados_impacto").value.trim(),
+        areas_incidencia: document.getElementById("areas_incidencia").value.trim(),
+        tematicas: document.getElementById("tematicas").value.trim(),
+        municipios_atendidos: document.getElementById("municipios_atendidos").value.trim(),
+        personas_impactadas: document.getElementById("personas_impactadas").value.trim(),
+        estado_actual: document.getElementById("estado_actual").value.trim(),
+        posibilidad_replica: document.getElementById("posibilidad_replica").value,
+        medios_verificacion: document.getElementById("medios_verificacion").value.trim(),
+        innovacion: document.getElementById("innovacion").value.trim()
       };
 
       try {
@@ -201,11 +298,11 @@
         });
 
         msg.style.color = "#15803d";
-        msg.textContent = "✓ Registro recibido exitosamente. Será evaluado por el equipo validador.";
+        msg.textContent = "✓ Proyecto registrado con éxito. Se ha enviado al equipo validador con estatus Pendiente.";
         document.getElementById("projectForm").reset();
       } catch (err) {
         msg.style.color = "#b91c1c";
-        msg.textContent = "Ocurrió un error al enviar el registro. Intente nuevamente.";
+        msg.textContent = "Ocurrió un error al enviar el registro. Por favor verifique su conexión e intente nuevamente.";
       } finally {
         btn.disabled = false;
         btn.textContent = "Enviar Registro";
