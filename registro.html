@@ -117,6 +117,17 @@
 
     <form id="projectForm">
       <div class="form-grid">
+        <!-- AQUÍ VA EL CORREO: -->
+    <div class="form-group full-width">
+      <label for="correo_capturista">Correo Electrónico Institucional (Quien captura) *</label>
+      <input 
+        type="email" 
+        id="correo_capturista" 
+        required 
+        placeholder="nombre.apellido@entidad.gob.mx"
+        pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+        title="Ingrese un correo electrónico válido, por ejemplo: usuario@dominio.com">
+    </div>        
         <div class="form-group">
           <label for="estado">Entidad Federativa *</label>
           <select id="estado" required>
@@ -168,12 +179,12 @@
 
         <div class="form-group">
           <label for="anio_instalacion">Año de Instalación del CPC</label>
-          <input type="text" id="anio_instalacion" placeholder="Ej. 2021">
+          <input type="text" id="anio_instalacion" required placeholder="Ej. 2021">
         </div>
 
         <div class="form-group">
           <label for="anio_inicio">Año de Inicio de Operación</label>
-          <input type="text" id="anio_inicio" placeholder="Ej. 2022">
+          <input type="text" id="anio_inicio" required placeholder="Ej. 2022">
         </div>
 
         <div class="form-group full-width">
@@ -188,37 +199,37 @@
 
         <div class="form-group full-width">
           <label for="acciones_realizadas">Acciones Realizadas</label>
-          <textarea id="acciones_realizadas" placeholder="Principales actividades ejecutadas..."></textarea>
+          <textarea id="acciones_realizadas" required placeholder="Principales actividades ejecutadas..."></textarea>
         </div>
 
         <div class="form-group full-width">
           <label for="instituciones_participantes">Instituciones Participantes</label>
-          <input type="text" id="instituciones_participantes" placeholder="Dependencias, organismos, sociedad civil...">
+          <input type="text" id="instituciones_participantes" required placeholder="Dependencias, organismos, sociedad civil...">
         </div>
 
         <div class="form-group full-width">
           <label for="resultados_impacto">Resultados e Impacto</label>
-          <textarea id="resultados_impacto" placeholder="Impacto cualitativo o cuantitativo obtenido..."></textarea>
+          <textarea id="resultados_impacto" required placeholder="Impacto cualitativo o cuantitativo obtenido..."></textarea>
         </div>
 
         <div class="form-group">
           <label for="areas_incidencia">Áreas de Incidencia</label>
-          <input type="text" id="areas_incidencia" placeholder="Ej. Combate a la corrupción, Transparencia...">
+          <input type="text" id="areas_incidencia" required placeholder="Ej. Combate a la corrupción, Transparencia...">
         </div>
 
         <div class="form-group">
           <label for="tematicas">Temáticas</label>
-          <input type="text" id="tematicas" placeholder="Ejes o temáticas asociadas">
+          <input type="text" id="tematicas" required placeholder="Ejes o temáticas asociadas">
         </div>
 
         <div class="form-group">
           <label for="municipios_atendidos">Municipios Atendidos</label>
-          <input type="text" id="municipios_atendidos" placeholder="Número o nombres de municipios">
+          <input type="text" id="municipios_atendidos" required placeholder="Número o nombres de municipios">
         </div>
 
         <div class="form-group">
           <label for="personas_impactadas">Personas Impactadas</label>
-          <input type="text" id="personas_impactadas" placeholder="Población beneficiada directa/indirecta">
+          <input type="text" id="personas_impactadas" required placeholder="Población beneficiada directa/indirecta">
         </div>
 
         <div class="form-group">
@@ -232,7 +243,7 @@
 
         <div class="form-group">
           <label for="posibilidad_replica">Posibilidad de Réplica</label>
-          <select id="posibilidad_replica">
+          <select id="posibilidad_replica" required>
             <option value="" selected>Seleccione una opción...</option>
             <option value="Alta">Alta</option>
             <option value="Media">Media</option>
@@ -242,12 +253,12 @@
 
         <div class="form-group full-width">
           <label for="innovacion">Innovación / Factor Diferencial</label>
-          <textarea id="innovacion" placeholder="¿Qué hace novedosa o única a esta práctica?"></textarea>
+          <textarea id="innovacion" required placeholder="¿Qué hace novedosa o única a esta práctica?"></textarea>
         </div>
 
         <div class="form-group full-width">
           <label for="medios_verificacion">Medios de Verificación / Evidencia Disponible</label>
-          <textarea id="medios_verificacion" placeholder="Mencione los documentos, acuerdos, gacetas, informes o actas que respaldan este proyecto..."></textarea>
+          <textarea id="medios_verificacion" required placeholder="Mencione los documentos, acuerdos, gacetas, informes o actas que respaldan este proyecto..."></textarea>
         </div>
 
       <button type="submit" id="btnSubmit">Enviar Registro</button>
@@ -271,6 +282,7 @@
       msg.textContent = "";
 
       const payload = {
+        correo_capturista: document.getElementById("correo_capturista").value.trim().toLowerCase(),
         estado: document.getElementById("estado").value,
         periodo: document.getElementById("periodo").value,
         anio_instalacion: document.getElementById("anio_instalacion").value.trim(),
